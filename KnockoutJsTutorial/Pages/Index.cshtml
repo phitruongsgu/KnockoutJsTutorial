@@ -1,0 +1,47 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<script src="~/lib/knockoutjs/knockout-3.5.1.js"></script>
+
+<p>FirstName: <span data-bind="text: firstName"></span></p>
+<p>LastName: <span data-bind="text: lastName"></span></p>
+<p>FullName: <span data-bind="text: fullName"></span></p>
+
+<input data-bind="value: firstName"/>
+
+<h2>Friends</h2>
+<ul data-bind="foreach: friends">
+    <li><span data-bind="text: $data.name"></span></li>
+    <button data-bind="click: remove">Xoá bạn</button>
+</ul>
+
+<button data-bind="click: addFriend">Thêm bạn mới</button>
+<script>
+    function friend(name){
+        return {
+            name: ko.observable(name),
+            remove: function(){
+                viewModel.friends.remove(this)
+            }
+        };
+    }
+
+    var viewModel = {
+        firstName: ko.observable("Phi Trường"), // observable giúp linh hoạt thay đổi dữ liệu
+        lastName: ko.observable("Nguyễn Vũ"),
+        friends: ko.observableArray([new friend("Trung"), new friend("Khánh")]),
+
+        addFriend: function(){
+            this.friends.push(new friend("Bạn mới"));
+        }
+    }
+
+    viewModel.fullName = ko.dependentObservable(function(){
+        return this.lastName() + " " + this.firstName()
+    },viewModel)
+
+    ko.applyBindings(viewModel);
+</script>
